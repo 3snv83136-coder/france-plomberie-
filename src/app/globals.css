@@ -8,10 +8,12 @@
     --foreground: 222 47% 11%;
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
-    --primary: 217 91% 45%;
+    --primary: 217 91% 45%;        /* bleu */
     --primary-foreground: 0 0% 100%;
-    --secondary: 24 95% 53%;
+    --primary-dark: 224 76% 33%;
+    --secondary: 22 95% 53%;       /* orange dépannage */
     --secondary-foreground: 0 0% 100%;
+    --secondary-dark: 18 92% 45%;
     --muted: 210 40% 96%;
     --muted-foreground: 215 16% 47%;
     --accent: 142 71% 45%;
@@ -20,7 +22,7 @@
     --destructive-foreground: 0 0% 100%;
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 217 91% 45%;
+    --ring: 22 95% 53%;
     --radius: 0.75rem;
   }
 
@@ -38,13 +40,16 @@
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50;
+    @apply inline-flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50;
   }
   .btn-primary {
-    @apply btn bg-primary text-primary-foreground hover:bg-primary/90;
+    @apply btn bg-primary text-primary-foreground hover:bg-[hsl(var(--primary-dark))] shadow-sm hover:shadow;
   }
   .btn-secondary {
-    @apply btn bg-secondary text-secondary-foreground hover:bg-secondary/90;
+    @apply btn bg-secondary text-secondary-foreground hover:bg-[hsl(var(--secondary-dark))] shadow-md hover:shadow-lg;
+  }
+  .btn-cta {
+    @apply btn bg-gradient-to-br from-[hsl(var(--secondary))] to-[hsl(var(--secondary-dark))] text-secondary-foreground shadow-lg hover:shadow-xl hover:scale-[1.02];
   }
   .btn-outline {
     @apply btn border border-input bg-background hover:bg-muted;
@@ -54,5 +59,25 @@
   }
   .input {
     @apply flex h-11 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50;
+  }
+}
+
+@layer utilities {
+  .pulse-ring::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: 0 0 0 0 hsl(var(--secondary));
+    animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  @keyframes pulse-ring {
+    0% { box-shadow: 0 0 0 0 hsla(var(--secondary), 0.5); }
+    70% { box-shadow: 0 0 0 14px hsla(var(--secondary), 0); }
+    100% { box-shadow: 0 0 0 0 hsla(var(--secondary), 0); }
+  }
+
+  .text-balance {
+    text-wrap: balance;
   }
 }

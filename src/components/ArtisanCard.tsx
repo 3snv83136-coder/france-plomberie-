@@ -1,27 +1,44 @@
 import Link from "next/link";
-import { CheckCircle2, Clock, Phone, MapPin, ShieldCheck } from "lucide-react";
+import { CheckCircle2, Clock, MapPin, Phone, ShieldCheck, Zap } from "lucide-react";
 import type { Artisan } from "@/data/artisans";
 import type { Trade } from "@/data/trades";
 import { RatingStars } from "./RatingStars";
 import { AvatarInitials } from "./AvatarInitials";
+import { CallbackButton } from "./CallbackButton";
 
 type Props = {
   artisan: Artisan;
   trade: Trade;
   citySlug: string;
+  cityName?: string;
+  postalCode?: string;
   rank?: number;
 };
 
-export function ArtisanCard({ artisan, trade, citySlug, rank }: Props) {
+export function ArtisanCard({
+  artisan,
+  trade,
+  citySlug,
+  cityName,
+  postalCode,
+  rank,
+}: Props) {
   const profileUrl = `/${trade.slug}/${citySlug}/${artisan.slug}`;
+  const callbackCtx = {
+    trade: trade.slug,
+    citySlug,
+    cityName,
+    postalCode,
+    artisanName: artisan.name,
+  };
 
   return (
-    <article className="card p-4 sm:p-5 hover:shadow-md transition-shadow">
+    <article className="card p-4 sm:p-5 hover:shadow-md hover:border-primary/30 transition-all">
       <div className="flex gap-4">
         <div className="relative shrink-0">
           <AvatarInitials name={artisan.name} size={72} rounded="lg" />
           {rank !== undefined && rank < 3 && (
-            <span className="absolute -top-2 -left-2 inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-500 text-white text-xs font-bold">
+            <span className="absolute -top-2 -left-2 inline-flex items-center justify-center w-7 h-7 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-white text-xs font-bold shadow-md ring-2 ring-background">
               {rank + 1}
             </span>
           )}
@@ -29,7 +46,7 @@ export function ArtisanCard({ artisan, trade, citySlug, rank }: Props) {
 
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2 mb-1">
-            <h3 className="font-semibold text-base leading-tight">
+            <h3 className="font-bold text-base leading-tight">
               <Link href={profileUrl} className="hover:text-primary">
                 {artisan.name}
               </Link>
@@ -37,7 +54,7 @@ export function ArtisanCard({ artisan, trade, citySlug, rank }: Props) {
             {artisan.verified && (
               <span
                 title="Entreprise vérifiée (SIRET)"
-                className="inline-flex items-center gap-1 text-xs text-accent shrink-0"
+                className="inline-flex items-center gap-1 text-xs text-accent shrink-0 font-medium"
               >
                 <ShieldCheck className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Vérifié</span>
@@ -57,8 +74,9 @@ export function ArtisanCard({ artisan, trade, citySlug, rank }: Props) {
               Répond en ~{artisan.responseTimeMinutes} min
             </span>
             {artisan.emergency && (
-              <span className="inline-flex items-center gap-1 text-destructive font-medium">
-                ⚡ Urgence 24/7
+              <span className="inline-flex items-center gap-1 text-secondary font-bold">
+                <Zap className="w-3.5 h-3.5 fill-secondary" />
+                24/7
               </span>
             )}
           </div>
@@ -82,17 +100,18 @@ export function ArtisanCard({ artisan, trade, citySlug, rank }: Props) {
           )}
 
           <div className="mt-3 flex flex-wrap items-center gap-2">
-            <Link href={profileUrl} className="btn-primary h-9 text-sm">
-              Voir le profil
-            </Link>
-            <a
-              href={`tel:${artisan.phone}`}
-              className="btn-outline h-9 text-sm"
-              aria-label={`Appeler ${artisan.name}`}
+            <CallbackButton
+              context={callbackCtx}
+              variant="cta"
+              size="md"
+              className="flex-1 min-w-0 sm:flex-initial"
             >
               <Phone className="w-3.5 h-3.5 mr-1.5" />
-              {artisan.phone.replace(/(\d{2})(?=\d)/g, "$1 ").trim()}
-            </a>
+              Être rappelé
+            </CallbackButton>
+            <Link href={profileUrl} className="btn-outline h-10 text-sm">
+              Voir le profil
+            </Link>
           </div>
         </div>
       </div>

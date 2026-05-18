@@ -3,10 +3,10 @@ import { notFound } from "next/navigation";
 import {
   CheckCircle2,
   Clock,
-  Mail,
   MapPin,
   Phone,
   ShieldCheck,
+  Zap,
 } from "lucide-react";
 import { getTradeBySlug } from "@/data/trades";
 import { getCityBySlug } from "@/data/cities";
@@ -15,6 +15,7 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { StructuredData } from "@/components/StructuredData";
 import { RatingStars } from "@/components/RatingStars";
 import { AvatarInitials } from "@/components/AvatarInitials";
+import { CallbackButton } from "@/components/CallbackButton";
 import { buildMetadata } from "@/lib/seo";
 import { breadcrumbSchema, localBusinessSchema } from "@/lib/schema";
 
@@ -110,27 +111,31 @@ export default async function ArtisanProfilePage({
                   Répond en ~{artisan.responseTimeMinutes} min
                 </span>
                 {artisan.emergency && (
-                  <span className="text-sm font-medium text-destructive inline-flex items-center gap-1">
-                    ⚡ Urgence 24h/24
+                  <span className="text-sm font-bold text-secondary inline-flex items-center gap-1">
+                    <Zap className="w-4 h-4 fill-secondary" />
+                    Urgence 24h/24
                   </span>
                 )}
               </div>
 
               <div className="mt-4 flex flex-wrap gap-2">
-                <a href={`tel:${artisan.phone}`} className="btn-primary h-11">
-                  <Phone className="w-4 h-4 mr-2" />
-                  {artisan.phone.replace(/(\d{2})(?=\d)/g, "$1 ").trim()}
-                </a>
-                <Link href="/devis" className="btn-secondary h-11">
-                  Demander un devis
-                </Link>
-                <a
-                  href={`mailto:${artisan.email}`}
-                  className="btn-outline h-11"
+                <CallbackButton
+                  context={{
+                    trade: trade.slug,
+                    citySlug: city.slug,
+                    cityName: city.name,
+                    postalCode: city.postalCode,
+                    artisanName: artisan.name,
+                  }}
+                  variant="cta"
+                  size="lg"
                 >
-                  <Mail className="w-4 h-4 mr-2" />
-                  Envoyer un email
-                </a>
+                  <Phone className="w-4 h-4 mr-2" />
+                  Être rappelé en 5 min
+                </CallbackButton>
+                <Link href="/devis" className="btn-outline h-12">
+                  Devis détaillé
+                </Link>
               </div>
             </div>
           </div>
@@ -218,18 +223,6 @@ export default async function ArtisanProfilePage({
                   <span>{artisan.address}</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <Phone className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
-                  <a href={`tel:${artisan.phone}`} className="text-primary hover:underline">
-                    {artisan.phone.replace(/(\d{2})(?=\d)/g, "$1 ").trim()}
-                  </a>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Mail className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
-                  <a href={`mailto:${artisan.email}`} className="text-primary hover:underline break-all">
-                    {artisan.email}
-                  </a>
-                </li>
-                <li className="flex items-start gap-2">
                   <Clock className="w-4 h-4 text-muted-foreground shrink-0 mt-0.5" />
                   <span>
                     {artisan.emergency
@@ -240,14 +233,32 @@ export default async function ArtisanProfilePage({
               </ul>
             </section>
 
-            <section className="card p-5 bg-gradient-to-br from-primary/10 to-accent/10">
-              <h2 className="text-base font-bold mb-2">Devis gratuit</h2>
-              <p className="text-sm text-muted-foreground mb-3">
-                Décrivez votre projet en 2 minutes, recevez jusqu'à 5 devis.
+            <section className="card p-5 bg-gradient-to-br from-primary to-[hsl(var(--primary-dark))] text-primary-foreground">
+              <div className="inline-flex items-center gap-1 text-xs font-bold bg-secondary text-secondary-foreground px-2 py-1 rounded mb-2">
+                <Zap className="w-3 h-3" /> DÈS 69 €
+              </div>
+              <h2 className="text-lg font-extrabold mb-1">
+                Devis gratuit en 5 min
+              </h2>
+              <p className="text-sm text-white/85 mb-3">
+                Laissez votre numéro, un technicien vous rappelle pour fixer
+                rendez-vous et établir un devis sans engagement.
               </p>
-              <Link href="/devis" className="btn-primary w-full">
-                Demander un devis
-              </Link>
+              <CallbackButton
+                context={{
+                  trade: trade.slug,
+                  citySlug: city.slug,
+                  cityName: city.name,
+                  postalCode: city.postalCode,
+                  artisanName: artisan.name,
+                }}
+                variant="cta"
+                size="lg"
+                className="w-full"
+              >
+                <Phone className="w-4 h-4 mr-2" />
+                Être rappelé
+              </CallbackButton>
             </section>
           </aside>
         </div>

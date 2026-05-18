@@ -1,6 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
-import { CheckCircle2, MapPin, Phone, ShieldCheck, Star, Users } from "lucide-react";
+import { CheckCircle2, MapPin, Phone, ShieldCheck, Star, Tv, Users, Zap } from "lucide-react";
 import { TRADES, getTradeBySlug } from "@/data/trades";
 import { CITIES, getCityBySlug } from "@/data/cities";
 import { getDepartmentByCode } from "@/data/departments";
@@ -9,9 +10,11 @@ import { getArtisansForCityAndTrade } from "@/lib/db/artisans";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { StructuredData } from "@/components/StructuredData";
 import { ArtisanCard } from "@/components/ArtisanCard";
+import { CallbackButton } from "@/components/CallbackButton";
 import { FAQ } from "@/components/FAQ";
-import { RatingStars } from "@/components/RatingStars";
 import { SearchBar } from "@/components/SearchBar";
+import { TrustBadges } from "@/components/TrustBadges";
+import { tradeHeroImage } from "@/lib/hero-images";
 import { buildMetadata } from "@/lib/seo";
 import {
   breadcrumbSchema,
@@ -118,63 +121,155 @@ export default async function CityTradePage({
         ]}
       />
 
-      <div className="container">
-        <Breadcrumbs items={crumbs} />
+      <section className="relative isolate overflow-hidden bg-gradient-to-br from-primary via-[hsl(var(--primary-dark))] to-[hsl(217_91%_25%)] text-primary-foreground">
+        <Image
+          src={tradeHeroImage(trade.slug)}
+          alt=""
+          fill
+          sizes="100vw"
+          priority
+          className="object-cover object-center opacity-20 mix-blend-luminosity"
+        />
+        <div className="container relative py-8 md:py-12">
+          <Breadcrumbs items={crumbs} />
 
-        <header className="py-6">
-          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">
-            {trade.name} à {city.name} ({city.department.code})
-          </h1>
-          <p className="text-muted-foreground text-base md:text-lg max-w-3xl">
-            Découvrez les <strong>{artisans.length} meilleurs {trade.plural.toLowerCase()}</strong> à {city.name} et alentours. Comparez les avis,
-            tarifs et certifications pour choisir l'artisan idéal pour vos travaux.
-          </p>
-
-          <div className="mt-5 flex flex-wrap items-center gap-4 text-sm">
-            <div className="inline-flex items-center gap-2">
-              <Users className="w-4 h-4 text-muted-foreground" />
-              <span>
-                <strong>{artisans.length}</strong> artisans à {city.name}
-              </span>
-            </div>
-            <div className="inline-flex items-center gap-2">
-              <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
-              <span>
-                <strong>{avgRating.toFixed(1).replace(".", ",")}/5</strong> de moyenne
-              </span>
-            </div>
-            {emergencyCount > 0 && (
-              <div className="inline-flex items-center gap-2">
-                <span className="text-destructive">⚡</span>
-                <span>
-                  <strong>{emergencyCount}</strong> en urgence 24/7
+          <div className="grid lg:grid-cols-[1.4fr_1fr] gap-6 lg:gap-10 items-center mt-2">
+            <div>
+              <div className="flex flex-wrap gap-2 mb-3">
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-secondary text-secondary-foreground shadow-sm">
+                  <Zap className="w-3 h-3" /> URGENCE 24/7
+                </span>
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-white/15 backdrop-blur">
+                  <Tv className="w-3 h-3" /> VU À LA TÉLÉ
+                </span>
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-accent/20 text-white border border-accent/30">
+                  <ShieldCheck className="w-3 h-3" /> SIRET VÉRIFIÉS
                 </span>
               </div>
-            )}
-            {rgeCount > 0 && (
-              <div className="inline-flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-accent" />
-                <span>
-                  <strong>{rgeCount}</strong> certifiés RGE
+              <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-3 text-balance">
+                {trade.name} à {city.name}
+                <span className="text-white/70 font-bold"> ({city.department.code})</span>
+              </h1>
+              <p className="text-white/90 text-base md:text-lg max-w-2xl mb-4">
+                Intervention en <strong className="text-secondary">30 minutes</strong> chez vous à {city.name}.
+                Devis gratuit, sans engagement. Disponibles 7j/7, jour et nuit.
+              </p>
+
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm mb-5">
+                <span className="inline-flex items-center gap-1.5">
+                  <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+                  <strong>{avgRating.toFixed(1).replace(".", ",")}/5</strong>
+                  <span className="text-white/75">· {artisans.length} pros</span>
                 </span>
+                {emergencyCount > 0 && (
+                  <span className="inline-flex items-center gap-1.5">
+                    <Zap className="w-4 h-4 text-secondary fill-secondary" />
+                    <strong>{emergencyCount}</strong>
+                    <span className="text-white/75">disponibles 24/7</span>
+                  </span>
+                )}
+                {rgeCount > 0 && (
+                  <span className="inline-flex items-center gap-1.5">
+                    <ShieldCheck className="w-4 h-4 text-accent" />
+                    <strong>{rgeCount}</strong>
+                    <span className="text-white/75">certifiés RGE</span>
+                  </span>
+                )}
               </div>
-            )}
+
+              <div className="flex flex-wrap gap-2 items-center">
+                <CallbackButton
+                  context={{
+                    trade: trade.slug,
+                    citySlug: city.slug,
+                    cityName: city.name,
+                    postalCode: city.postalCode,
+                  }}
+                  variant="cta"
+                  size="xl"
+                >
+                  <Phone className="w-5 h-5 mr-2" />
+                  Être rappelé en 5 min
+                </CallbackButton>
+                <Link
+                  href="/devis"
+                  className="btn h-14 px-5 text-base bg-white/10 text-white hover:bg-white/15 backdrop-blur"
+                >
+                  Devis détaillé
+                </Link>
+              </div>
+
+              <p className="mt-3 text-xs text-white/70 inline-flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-accent" />
+                100% gratuit · Sans engagement · Réponse sous 5 min
+              </p>
+            </div>
+
+            <aside className="hidden lg:block">
+              <div className="card bg-white text-foreground p-6 shadow-2xl rotate-1">
+                <div className="flex items-start gap-3 mb-4">
+                  <div className="inline-flex items-center justify-center bg-secondary text-secondary-foreground rounded-xl px-3 py-2.5 shrink-0">
+                    <div>
+                      <div className="text-[10px] font-bold uppercase tracking-wider opacity-90">À partir de</div>
+                      <div className="text-3xl font-extrabold leading-none">69 €</div>
+                    </div>
+                  </div>
+                  <div>
+                    <h2 className="font-extrabold text-lg leading-tight">
+                      Pas de surprise sur la facture
+                    </h2>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Tarif annoncé = tarif facturé. Devis signé avant intervention.
+                    </p>
+                  </div>
+                </div>
+                <ul className="space-y-2 text-sm">
+                  {[
+                    "Déplacement compris dans le devis",
+                    "Aucun frais caché",
+                    "Paiement après intervention",
+                    "Garantie pièces et main d'œuvre",
+                  ].map((s) => (
+                    <li key={s} className="flex items-start gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-accent shrink-0 mt-0.5" />
+                      <span>{s}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </aside>
           </div>
-        </header>
+        </div>
 
-        <div className="mb-6">
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-transparent via-transparent to-black/40 pointer-events-none" />
+      </section>
+
+      <div className="container">
+        <div className="my-6">
           <SearchBar />
         </div>
 
         <section className="my-8">
-          <div className="flex items-end justify-between mb-4">
-            <h2 className="text-2xl font-bold">
-              Top {Math.min(artisans.length, 10)} des {trade.plural.toLowerCase()} à {city.name}
-            </h2>
-            <Link href="/devis" className="btn-primary h-10 hidden sm:inline-flex">
-              <Phone className="w-4 h-4 mr-1.5" />
-              Devis gratuit
-            </Link>
+          <div className="flex items-end justify-between mb-4 gap-3">
+            <div>
+              <h2 className="text-2xl md:text-3xl font-extrabold leading-tight">
+                Top {Math.min(artisans.length, 10)} {trade.plural.toLowerCase()} à {city.name}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Classement basé sur les avis, l'ancienneté et les certifications.
+              </p>
+            </div>
+            <CallbackButton
+              context={{
+                trade: trade.slug,
+                citySlug: city.slug,
+                cityName: city.name,
+                postalCode: city.postalCode,
+              }}
+              variant="cta"
+              size="md"
+              className="hidden sm:inline-flex shrink-0"
+            />
           </div>
           <div className="grid gap-4">
             {artisans.map((a, i) => (
@@ -182,6 +277,8 @@ export default async function CityTradePage({
                 key={a.id}
                 artisan={a}
                 trade={trade}
+                cityName={city.name}
+                postalCode={city.postalCode}
                 citySlug={city.slug}
                 rank={i}
               />
@@ -351,22 +448,40 @@ export default async function CityTradePage({
           </div>
         </section>
 
-        <section className="my-10 card p-6 bg-gradient-to-br from-primary/10 to-accent/10 border-primary/20">
+        <section className="my-10 rounded-2xl overflow-hidden bg-gradient-to-br from-primary to-[hsl(var(--primary-dark))] text-primary-foreground p-6 md:p-8 shadow-lg">
           <div className="md:flex items-center justify-between gap-6">
-            <div>
-              <h2 className="text-2xl font-bold mb-2">
-                Besoin d'un {trade.name.toLowerCase()} à {city.name} ?
+            <div className="flex-1">
+              <div className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-bold bg-secondary text-secondary-foreground mb-2">
+                <Zap className="w-3 h-3" /> URGENCE 24/7 · DÈS 69 €
+              </div>
+              <h2 className="text-2xl md:text-3xl font-extrabold mb-2 text-balance">
+                Un {trade.name.toLowerCase()} à {city.name}, maintenant ?
               </h2>
-              <p className="text-muted-foreground">
-                Recevez jusqu'à 5 devis gratuits sous 24h, sans engagement.
+              <p className="text-white/85">
+                Laissez votre numéro, un technicien vous rappelle sous 5 min pour
+                un devis gratuit et sans engagement.
               </p>
             </div>
-            <Link href="/devis" className="btn-primary h-12 px-6 shrink-0 mt-4 md:mt-0">
-              <Phone className="w-4 h-4 mr-2" />
-              Demander un devis gratuit
-            </Link>
+            <CallbackButton
+              context={{
+                trade: trade.slug,
+                citySlug: city.slug,
+                cityName: city.name,
+                postalCode: city.postalCode,
+              }}
+              variant="cta"
+              size="xl"
+              className="shrink-0 mt-4 md:mt-0"
+            >
+              <Phone className="w-5 h-5 mr-2" />
+              Être rappelé
+            </CallbackButton>
           </div>
         </section>
+
+        <div className="my-8">
+          <TrustBadges variant="compact" />
+        </div>
       </div>
     </>
   );

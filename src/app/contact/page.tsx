@@ -1,5 +1,6 @@
 import { Clock, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { CallbackButton } from "@/components/CallbackButton";
 import { StructuredData } from "@/components/StructuredData";
 import { buildMetadata } from "@/lib/seo";
 import { breadcrumbSchema } from "@/lib/schema";
@@ -83,19 +84,14 @@ export default function ContactPage() {
             </div>
 
             <div className="card p-5">
-              <div className="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-3">
+              <div className="w-10 h-10 rounded-lg bg-secondary/10 text-secondary flex items-center justify-center mb-3">
                 <Phone className="w-5 h-5" />
               </div>
-              <h2 className="font-bold mb-1">Téléphone</h2>
+              <h2 className="font-bold mb-1">Être rappelé</h2>
               <p className="text-sm text-muted-foreground mb-2">
-                Lundi au vendredi, 9h–18h.
+                Laissez votre numéro, on vous rappelle sous 5 min.
               </p>
-              <a
-                href="tel:+33100000000"
-                className="text-primary text-sm font-medium hover:underline"
-              >
-                01 00 00 00 00
-              </a>
+              <CallbackButton variant="cta" size="md" className="w-full" />
             </div>
 
             <div className="card p-5">
