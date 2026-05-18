@@ -1,6 +1,17 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
-import { ArrowRight, CheckCircle2, MapPin, Users } from "lucide-react";
+import {
+  ArrowRight,
+  CheckCircle2,
+  MapPin,
+  Phone,
+  ShieldCheck,
+  Star,
+  Tv,
+  Users,
+  Zap,
+} from "lucide-react";
 import { TRADES, getTradeBySlug } from "@/data/trades";
 import { DEPARTMENTS, getDepartmentBySlug } from "@/data/departments";
 import { getRegionBySlug } from "@/data/regions";
@@ -12,8 +23,11 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { StructuredData } from "@/components/StructuredData";
 import { FAQ } from "@/components/FAQ";
 import { SearchBar } from "@/components/SearchBar";
+import { CallbackButton } from "@/components/CallbackButton";
+import { TrustBadges } from "@/components/TrustBadges";
 import { buildMetadata } from "@/lib/seo";
 import { breadcrumbSchema, faqSchema } from "@/lib/schema";
+import { tradeHeroImage } from "@/lib/hero-images";
 
 export const dynamicParams = false;
 export const revalidate = 86400;
@@ -104,45 +118,94 @@ export default async function DepartmentTradePage({
         ]}
       />
 
-      <div className="container">
-        <Breadcrumbs items={crumbs} />
+      <section className="relative isolate overflow-hidden bg-gradient-to-br from-primary via-[hsl(var(--primary-dark))] to-[hsl(217_91%_22%)] text-primary-foreground">
+        <Image
+          src={tradeHeroImage(trade.slug)}
+          alt=""
+          fill
+          sizes="100vw"
+          priority
+          className="object-cover object-center opacity-15 mix-blend-luminosity"
+        />
+        <div className="container relative py-8 md:py-12">
+          <Breadcrumbs items={crumbs} />
 
-        <header className="py-6">
-          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">
-            {trade.name} dans le {dept.name} ({dept.code})
-          </h1>
-          <p className="text-muted-foreground text-base md:text-lg max-w-3xl">
-            Trouvez un {trade.name.toLowerCase()} qualifié dans le département du{" "}
-            <strong>{dept.name}</strong>. {trade.shortDescription}
-          </p>
+          <div className="mt-2">
+            <div className="flex flex-wrap gap-2 mb-3">
+              {trade.emergency && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-secondary text-secondary-foreground shadow-sm">
+                  <Zap className="w-3 h-3" /> URGENCE 24/7
+                </span>
+              )}
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-white/15 backdrop-blur">
+                <Tv className="w-3 h-3" /> VU À LA TÉLÉ
+              </span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-accent/20 text-white border border-accent/30">
+                <ShieldCheck className="w-3 h-3" /> SIRET VÉRIFIÉS
+              </span>
+            </div>
+            <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-3 text-balance">
+              {trade.name} {dept.name}
+              <span className="text-white/70 font-bold"> ({dept.code})</span>
+            </h1>
+            <p className="text-white/90 text-base md:text-lg max-w-3xl mb-5">
+              Intervention dans tout le {dept.name} en{" "}
+              <strong className="text-secondary">30 minutes</strong>. Devis gratuit
+              à partir de {trade.avgPrice.min} €. Pros vérifiés, 24h/24.
+            </p>
 
-          <div className="mt-5 flex flex-wrap items-center gap-4 text-sm">
-            <span className="inline-flex items-center gap-2">
-              <Users className="w-4 h-4 text-muted-foreground" />
-              <strong>{dept.population.toLocaleString("fr-FR")}</strong> habitants
-            </span>
-            <span className="inline-flex items-center gap-2">
-              <MapPin className="w-4 h-4 text-muted-foreground" />
-              Préfecture&nbsp;: <strong>{dept.prefecture}</strong>
-            </span>
-            {region && (
-              <span className="inline-flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-muted-foreground" />
-                Région&nbsp;:{" "}
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm mb-5">
+              <span className="inline-flex items-center gap-1.5">
+                <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+                <strong>4,8/5</strong>
+                <span className="text-white/75">· 12 000 avis</span>
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <Users className="w-4 h-4 text-white/80" />
+                <strong>{dept.population.toLocaleString("fr-FR")}</strong>
+                <span className="text-white/75">habitants couverts</span>
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <MapPin className="w-4 h-4 text-white/80" />
+                <span className="text-white/85">
+                  Préfecture <strong>{dept.prefecture}</strong>
+                </span>
+              </span>
+            </div>
+
+            <div className="flex flex-wrap gap-2 items-center">
+              <CallbackButton
+                context={{ trade: trade.slug }}
+                variant="cta"
+                size="xl"
+              >
+                <Phone className="w-5 h-5 mr-2" />
+                Être rappelé en 5 min
+              </CallbackButton>
+              {region && (
                 <Link
                   href={`/${trade.slug}/region/${region.slug}`}
-                  className="text-primary hover:underline font-medium"
+                  className="btn h-14 px-5 text-base bg-white/10 text-white hover:bg-white/15 backdrop-blur"
                 >
-                  {region.name}
+                  {trade.name} en {region.name}
                 </Link>
-              </span>
-            )}
+              )}
+            </div>
           </div>
-        </header>
-
-        <div className="mb-8">
-          <SearchBar />
         </div>
+
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-transparent via-transparent to-black/30 pointer-events-none" />
+      </section>
+
+      <section className="container -mt-6 relative z-10 mb-6">
+        <SearchBar size="lg" />
+      </section>
+
+      <section className="container py-4">
+        <TrustBadges variant="compact" />
+      </section>
+
+      <div className="container">
 
         {cities.length > 0 ? (
           <section className="my-10">
@@ -258,6 +321,32 @@ export default async function DepartmentTradePage({
                 {t.name}
               </Link>
             ))}
+          </div>
+        </section>
+
+        <section className="my-10 rounded-2xl overflow-hidden bg-gradient-to-br from-primary to-[hsl(var(--primary-dark))] text-primary-foreground p-6 md:p-8 shadow-lg">
+          <div className="md:flex items-center justify-between gap-6">
+            <div className="flex-1">
+              <div className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-bold bg-secondary text-secondary-foreground mb-2">
+                <Zap className="w-3 h-3" /> URGENCE 24/7 · DÈS {trade.avgPrice.min} €
+              </div>
+              <h2 className="text-2xl md:text-3xl font-extrabold mb-2 text-balance">
+                Un {trade.name.toLowerCase()} dans le {dept.name}, maintenant ?
+              </h2>
+              <p className="text-white/85">
+                Laissez votre numéro, un technicien vous rappelle sous 5 min pour
+                un devis gratuit et sans engagement.
+              </p>
+            </div>
+            <CallbackButton
+              context={{ trade: trade.slug }}
+              variant="cta"
+              size="xl"
+              className="shrink-0 mt-4 md:mt-0"
+            >
+              <Phone className="w-5 h-5 mr-2" />
+              Être rappelé
+            </CallbackButton>
           </div>
         </section>
       </div>
