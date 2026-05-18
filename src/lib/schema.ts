@@ -86,11 +86,14 @@ export function localBusinessSchema(
       addressRegion: city.region,
       addressCountry: "FR",
     },
-    geo: {
-      "@type": "GeoCoordinates",
-      latitude: city.lat,
-      longitude: city.lng,
-    },
+    geo:
+      city.lat != null && city.lng != null
+        ? {
+            "@type": "GeoCoordinates",
+            latitude: city.lat,
+            longitude: city.lng,
+          }
+        : undefined,
     areaServed: {
       "@type": "City",
       name: city.name,
