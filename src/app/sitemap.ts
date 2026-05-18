@@ -3,6 +3,7 @@ import { TRADES } from "@/data/trades";
 import { CITIES } from "@/data/cities";
 import { REGIONS } from "@/data/regions";
 import { DEPARTMENTS } from "@/data/departments";
+import { GUIDES } from "@/data/guides";
 import { getArtisansForCityAndTrade } from "@/data/artisans";
 import { SITE_URL } from "@/lib/utils";
 
@@ -77,6 +78,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.5,
+    });
+  }
+
+  for (const g of GUIDES) {
+    entries.push({
+      url: `${SITE_URL}/guides/${g.slug}`,
+      lastModified: new Date(g.updatedAt),
+      changeFrequency: "monthly",
+      priority: 0.7,
     });
   }
 
