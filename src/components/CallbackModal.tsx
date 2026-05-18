@@ -25,7 +25,6 @@ type FormState =
   | { status: "success" }
   | { status: "error"; message: string };
 
-// Lite data shipped to the client to avoid pulling the full dataset.
 const TRADES_LITE = [
   ["plombier", "Plombier"],
   ["electricien", "Électricien"],
@@ -46,7 +45,6 @@ export function CallbackModal({ isOpen, onClose, context }: Props) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const firstInputRef = useRef<HTMLInputElement>(null);
 
-  // ESC to close + focus management
   useEffect(() => {
     if (!isOpen) return;
     setState({ status: "idle" });
@@ -55,7 +53,6 @@ export function CallbackModal({ isOpen, onClose, context }: Props) {
     };
     window.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
-    // Focus first input after the dialog mounts
     requestAnimationFrame(() => firstInputRef.current?.focus());
     return () => {
       window.removeEventListener("keydown", onKey);
@@ -75,8 +72,7 @@ export function CallbackModal({ isOpen, onClose, context }: Props) {
       trade_slug: String(fd.get("trade") || context.trade || ""),
       city_name: String(fd.get("city") || context.cityName || ""),
       city_slug: context.citySlug,
-      postal_code:
-        String(fd.get("postalCode") || context.postalCode || "75000"),
+      postal_code: String(fd.get("postalCode") || context.postalCode || "75000"),
       description: `Demande de rappel${
         context.artisanName ? ` (depuis profil ${context.artisanName})` : ""
       }. Métier : ${String(fd.get("trade") || context.trade || "")}. Ville : ${

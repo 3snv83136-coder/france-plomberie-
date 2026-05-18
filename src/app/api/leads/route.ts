@@ -4,6 +4,7 @@ import {
   createSupabaseServiceClient,
   isSupabaseConfigured,
 } from "@/lib/supabase/server";
+import { isEmailConfigured, sendLeadEmail } from "@/lib/email";
 import { getTradeBySlug } from "@/data/trades";
 import { slugify } from "@/lib/utils";
 
@@ -26,7 +27,13 @@ type LeadBody = {
   source?: string;
 };
 
-function validate(body: LeadBody): { ok: true; data: Required<Omit<LeadBody, "city_name" | "city_slug" | "source">> & { city_slug: string | null; source: string } } | { ok: false; error: string } {
+type ValidatedLead = Required<Omit<LeadBody, "city_name" | "city_slug" | "source">> & {
+  city_slug: string | null;
+  city_name: string;
+  source: string;
+};
+
+function validate(body: LeadBody): { ok: true; data: ValidatedLead } | { ok: false; error: string } {
   if (!body || typeof body !== "object") return { ok: false, error: "Invalid payload" };
   if (!body.trade_slug || !getTradeBySlug(body.trade_slug)) {
     return { ok: false, error: "Métier invalide" };
@@ -51,12 +58,14 @@ function validate(body: LeadBody): { ok: true; data: Required<Omit<LeadBody, "ci
   }
 
   const citySlug = body.city_slug ?? (body.city_name ? slugify(body.city_name) : null);
+  const cityName = body.city_name?.trim() ?? "";
 
   return {
     ok: true,
     data: {
       trade_slug: body.trade_slug,
       city_slug: citySlug,
+      city_name: cityName,
       postal_code: body.postal_code,
       description: body.description.trim(),
       name: body.name.trim(),
@@ -81,33 +90,58 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: validation.error }, { status: 422 });
   }
 
-  if (!isSupabaseConfigured()) {
-    // Graceful degradation: the form was submitted but no backend is wired up.
-    console.warn("[api/leads] Supabase not configured. Lead dropped:", {
-      trade: validation.data.trade_slug,
-      city: validation.data.city_slug,
-      postal: validation.data.postal_code,
-    });
+  const hdrs = await headers();
+  const userAgent = hdrs.get("user-agent")?.slice(0, 500) ?? null;
+
+  // 1) Persist to Supabase if configured.
+  let persisted = false;
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = createSupabaseServiceClient();
+      // city_name is for the email template only; the DB has city_slug.
+      const { city_name: _cityName, ...dbRow } = validation.data;
+      void _cityName;
+      const { error } = await supabase.from("leads").insert({
+        ...dbRow,
+        user_agent: userAgent,
+      });
+      if (error) {
+        console.error("[api/leads] insert error:", error.message);
+        return NextResponse.json({ error: "Erreur d'enregistrement" }, { status: 500 });
+      }
+      persisted = true;
+    } catch (e) {
+      console.error("[api/leads] supabase threw:", e);
+      return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
+    }
+  } else {
+    console.warn("[api/leads] Supabase not configured — lead not persisted.");
+  }
+
+  // 2) Send the lead email (best-effort: never fails the request).
+  let emailSent = false;
+  if (isEmailConfigured()) {
+    try {
+      await sendLeadEmail(validation.data);
+      emailSent = true;
+    } catch (e) {
+      console.error("[api/leads] email send failed:", e);
+    }
+  }
+
+  // If neither persisted nor emailed, return 202 so the client knows we got the
+  // request but no backend acted on it (graceful degradation in dev).
+  if (!persisted && !emailSent) {
     return NextResponse.json(
-      { ok: true, persisted: false, message: "Demande reçue (backend non configuré)." },
+      {
+        ok: true,
+        persisted: false,
+        emailSent: false,
+        message: "Demande reçue (backend non configuré).",
+      },
       { status: 202 },
     );
   }
 
-  try {
-    const hdrs = await headers();
-    const supabase = createSupabaseServiceClient();
-    const { error } = await supabase.from("leads").insert({
-      ...validation.data,
-      user_agent: hdrs.get("user-agent")?.slice(0, 500) ?? null,
-    });
-    if (error) {
-      console.error("[api/leads] insert error:", error.message);
-      return NextResponse.json({ error: "Erreur d'enregistrement" }, { status: 500 });
-    }
-    return NextResponse.json({ ok: true, persisted: true }, { status: 201 });
-  } catch (e) {
-    console.error("[api/leads] threw:", e);
-    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
-  }
+  return NextResponse.json({ ok: true, persisted, emailSent }, { status: 201 });
 }
