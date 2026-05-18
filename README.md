@@ -48,17 +48,54 @@ pnpm typecheck
 
 ## Données
 
-Les artisans sont fictifs et générés à la volée par `src/data/artisans.ts` (random seedé pour stabilité). À remplacer par un import depuis l'API Sirene de l'INSEE + table Supabase `artisans`.
+Le site fonctionne en deux modes :
 
-## Roadmap (extraite du plan global)
+1. **Sans Supabase configuré** (par défaut) : les artisans sont générés à la volée par `src/data/artisans.ts` (RNG seedée, données stables). Le formulaire de devis renvoie `202 Accepted` sans persister.
 
-1. Branchement Supabase + import Sirene
-2. Recherche Meilisearch (autocomplete)
-3. Auth artisan (Supabase Auth)
-4. Espace artisan : dashboard leads, photos, abonnement Stripe
-5. Pages département + région
-6. 400+ guides éditoriaux
-7. Avis vérifiés (mail post-intervention)
-8. Carte interactive Leaflet/MapLibre
-9. Tracking SERP (top 100 villes × top 10 métiers)
-10. Backlinks campaign (50 RD DR>40 en 6 mois)
+2. **Avec Supabase configuré** : la data access layer (`src/lib/db/`) requête Supabase en priorité, tombe sur les données seed en cas d'erreur/absence. Le formulaire devis persiste dans `public.leads`.
+
+### Setup Supabase
+
+```bash
+# 1. Créer un projet sur https://supabase.com
+# 2. Copier .env.example vers .env.local et remplir les 3 variables
+
+# 3. Appliquer les migrations (au choix)
+#    a) Via Supabase CLI :
+supabase link --project-ref <REF>
+supabase db push
+#    b) Ou copier-coller le contenu de supabase/migrations/*.sql
+#       dans le SQL Editor de Supabase Studio, dans l'ordre.
+
+# 4. Lancer le site
+pnpm dev
+```
+
+### Schéma BDD
+
+- `regions`, `departments`, `cities`, `trades` — référentiel géo et métiers (read-only public)
+- `artisans` — fiches artisans (RLS : public si `status = 'active'`, écriture artisan via `user_id`)
+- `reviews` — avis clients (RLS : insertion publique en `pending`, modération via service_role)
+- `leads` — demandes de devis (RLS : insertion publique, lecture service_role uniquement → PII)
+- `lead_dispatches` — relation lead × artisan (RLS : artisan voit ses dispatches)
+- `profiles` — extension de `auth.users` (artisans, admin, support)
+
+Tous les triggers `updated_at` et la création automatique de profil au signup sont inclus.
+
+## Roadmap restante
+
+1. ~~Scaffold Next.js + SEO programmatique~~ ✓
+2. ~~Pages département + région~~ ✓
+3. ~~Pages trust/légales (E-E-A-T)~~ ✓
+4. ~~10+ guides éditoriaux longs~~ ✓
+5. ~~Performance (avatars locaux, OG dynamique, manifest)~~ ✓
+6. ~~Supabase schema + API leads~~ ✓
+7. Script de seed `pnpm seed:db` (référentiel géo dans Supabase)
+8. Import Sirene de l'INSEE (~1M artisans)
+9. Auth artisan (Supabase Auth) + espace dashboard
+10. Recherche Meilisearch (autocomplete)
+11. Avis vérifiés (mail post-intervention)
+12. Carte interactive Leaflet/MapLibre
+13. Stripe abonnements Premium artisan
+14. Tracking SERP (top 100 villes × top 10 métiers)
+15. Backlinks campaign (50 RD DR>40 en 6 mois)

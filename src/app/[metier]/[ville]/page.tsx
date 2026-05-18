@@ -5,7 +5,7 @@ import { TRADES, getTradeBySlug } from "@/data/trades";
 import { CITIES, getCityBySlug } from "@/data/cities";
 import { getDepartmentByCode } from "@/data/departments";
 import { getRegionForDepartment } from "@/lib/geo";
-import { getArtisansForCityAndTrade } from "@/data/artisans";
+import { getArtisansForCityAndTrade } from "@/lib/db/artisans";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { StructuredData } from "@/components/StructuredData";
 import { ArtisanCard } from "@/components/ArtisanCard";
@@ -85,7 +85,7 @@ export default async function CityTradePage({
   const city = getCityBySlug(ville);
   if (!trade || !city) notFound();
 
-  const artisans = getArtisansForCityAndTrade(city.slug, trade.slug);
+  const artisans = await getArtisansForCityAndTrade(city.slug, trade.slug);
   const path = `/${trade.slug}/${city.slug}`;
   const avgRating =
     artisans.reduce((sum, a) => sum + a.rating, 0) / Math.max(artisans.length, 1);

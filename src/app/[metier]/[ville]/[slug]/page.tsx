@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { getTradeBySlug } from "@/data/trades";
 import { getCityBySlug } from "@/data/cities";
-import { getArtisanBySlug, getArtisansForCityAndTrade } from "@/data/artisans";
+import { getArtisanBySlug, getArtisansForCityAndTrade } from "@/lib/db/artisans";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { StructuredData } from "@/components/StructuredData";
 import { RatingStars } from "@/components/RatingStars";
@@ -30,7 +30,7 @@ export async function generateMetadata({
   const trade = getTradeBySlug(metier);
   const city = getCityBySlug(ville);
   if (!trade || !city) return {};
-  const artisan = getArtisanBySlug(city.slug, trade.slug, slug);
+  const artisan = await getArtisanBySlug(city.slug, trade.slug, slug);
   if (!artisan) return {};
 
   return buildMetadata({
@@ -49,11 +49,11 @@ export default async function ArtisanProfilePage({
   const trade = getTradeBySlug(metier);
   const city = getCityBySlug(ville);
   if (!trade || !city) notFound();
-  const artisan = getArtisanBySlug(city.slug, trade.slug, slug);
+  const artisan = await getArtisanBySlug(city.slug, trade.slug, slug);
   if (!artisan) notFound();
 
   const path = `/${trade.slug}/${city.slug}/${artisan.slug}`;
-  const similar = getArtisansForCityAndTrade(city.slug, trade.slug)
+  const similar = (await getArtisansForCityAndTrade(city.slug, trade.slug))
     .filter((a) => a.id !== artisan.id)
     .slice(0, 4);
 
