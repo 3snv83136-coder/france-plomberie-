@@ -63,12 +63,29 @@ export default function sitemap(): MetadataRoute.Sitemap {
     }
   }
 
-  for (const path of ["/devis", "/metiers", "/guides", "/recherche", "/artisan/inscription"]) {
+  for (const path of [
+    "/devis",
+    "/metiers",
+    "/guides",
+    "/recherche",
+    "/artisan/inscription",
+    "/a-propos",
+    "/contact",
+  ]) {
     entries.push({
       url: `${SITE_URL}${path}`,
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.5,
+    });
+  }
+
+  for (const path of ["/mentions-legales", "/confidentialite", "/cgu"]) {
+    entries.push({
+      url: `${SITE_URL}${path}`,
+      lastModified: now,
+      changeFrequency: "yearly",
+      priority: 0.2,
     });
   }
 

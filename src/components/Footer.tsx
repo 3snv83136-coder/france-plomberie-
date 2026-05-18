@@ -85,7 +85,12 @@ export function Footer() {
             </li>
             <li>
               <Link href="/confidentialite" className="text-muted-foreground hover:text-foreground">
-                Confidentialité
+                Confidentialité (RGPD)
+              </Link>
+            </li>
+            <li>
+              <Link href="/cgu" className="text-muted-foreground hover:text-foreground">
+                CGU
               </Link>
             </li>
           </ul>
