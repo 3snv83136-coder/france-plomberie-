@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import {
   CheckCircle2,
@@ -6,6 +7,8 @@ import {
   MapPin,
   Phone,
   ShieldCheck,
+  Star,
+  Tv,
   Zap,
 } from "lucide-react";
 import { getTradeBySlug } from "@/data/trades";
@@ -16,8 +19,10 @@ import { StructuredData } from "@/components/StructuredData";
 import { RatingStars } from "@/components/RatingStars";
 import { AvatarInitials } from "@/components/AvatarInitials";
 import { CallbackButton } from "@/components/CallbackButton";
+import { TrustBadges } from "@/components/TrustBadges";
 import { buildMetadata } from "@/lib/seo";
 import { breadcrumbSchema, localBusinessSchema } from "@/lib/schema";
+import { tradeHeroImage } from "@/lib/hero-images";
 
 export const dynamicParams = true;
 export const revalidate = 86400;
@@ -70,55 +75,84 @@ export default async function ArtisanProfilePage({
         data={[breadcrumbSchema(crumbs), localBusinessSchema(artisan, city, trade, path)]}
       />
 
-      <div className="container">
-        <Breadcrumbs items={crumbs} />
+      <section className="relative isolate overflow-hidden bg-gradient-to-br from-primary via-[hsl(var(--primary-dark))] to-[hsl(217_91%_22%)] text-primary-foreground">
+        <Image
+          src={tradeHeroImage(trade.slug)}
+          alt=""
+          fill
+          sizes="100vw"
+          priority
+          className="object-cover object-center opacity-15 mix-blend-luminosity"
+        />
+        <div className="container relative py-6 md:py-10">
+          <Breadcrumbs items={crumbs} />
 
-        <section className="card p-6 my-4">
-          <div className="flex flex-col sm:flex-row gap-5">
-            <AvatarInitials
-              name={artisan.name}
-              size={128}
-              rounded="xl"
-              className="mx-auto sm:mx-0"
-            />
-
-            <div className="flex-1">
-              <div className="flex items-start justify-between gap-3 flex-wrap">
-                <div>
-                  <h1 className="text-2xl md:text-3xl font-extrabold leading-tight">
-                    {artisan.name}
-                  </h1>
-                  <p className="text-muted-foreground">
-                    {trade.name} à {city.name} ({city.postalCode})
-                  </p>
-                </div>
-                {artisan.verified && (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/10 text-accent text-sm font-medium">
-                    <ShieldCheck className="w-4 h-4" />
-                    Entreprise vérifiée
-                  </span>
-                )}
-              </div>
-
-              <div className="mt-3 flex items-center gap-4 flex-wrap">
-                <RatingStars
-                  rating={artisan.rating}
-                  reviewCount={artisan.reviewCount}
-                  size="lg"
-                />
-                <span className="text-sm text-muted-foreground inline-flex items-center gap-1">
-                  <Clock className="w-4 h-4" />
-                  Répond en ~{artisan.responseTimeMinutes} min
+          <div className="flex flex-col sm:flex-row gap-5 items-start mt-2">
+            <div className="relative shrink-0 mx-auto sm:mx-0">
+              <AvatarInitials
+                name={artisan.name}
+                size={128}
+                rounded="xl"
+                className="ring-4 ring-white/30 shadow-2xl"
+              />
+              {artisan.verified && (
+                <span className="absolute -bottom-2 -right-2 inline-flex items-center justify-center w-9 h-9 rounded-full bg-accent text-white ring-4 ring-[hsl(var(--primary-dark))] shadow-lg">
+                  <ShieldCheck className="w-5 h-5" />
                 </span>
+              )}
+            </div>
+
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-wrap gap-2 mb-2">
                 {artisan.emergency && (
-                  <span className="text-sm font-bold text-secondary inline-flex items-center gap-1">
-                    <Zap className="w-4 h-4 fill-secondary" />
-                    Urgence 24h/24
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-secondary text-secondary-foreground shadow-sm">
+                    <Zap className="w-3 h-3" /> URGENCE 24/7
+                  </span>
+                )}
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-white/15 backdrop-blur">
+                  <Tv className="w-3 h-3" /> VU À LA TÉLÉ
+                </span>
+                {artisan.verified && (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-accent/20 border border-accent/30">
+                    <ShieldCheck className="w-3 h-3" /> SIRET VÉRIFIÉ
                   </span>
                 )}
               </div>
+              <h1 className="text-2xl md:text-4xl font-extrabold leading-tight text-balance">
+                {artisan.name}
+              </h1>
+              <p className="text-white/80 text-base md:text-lg mt-1">
+                {trade.name} à <Link href={`/${trade.slug}/${city.slug}`} className="text-white hover:underline font-semibold">{city.name}</Link> ({city.postalCode})
+              </p>
 
-              <div className="mt-4 flex flex-wrap gap-2">
+              <div className="mt-3 flex items-center gap-4 flex-wrap text-sm">
+                <span className="inline-flex items-center gap-1.5">
+                  <div className="flex">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <Star
+                        key={i}
+                        className={`w-4 h-4 ${i <= Math.round(artisan.rating) ? "text-amber-400 fill-amber-400" : "text-white/30"}`}
+                      />
+                    ))}
+                  </div>
+                  <strong>{artisan.rating.toFixed(1).replace(".", ",")}/5</strong>
+                  <span className="text-white/75">· {artisan.reviewCount.toLocaleString("fr-FR")} avis</span>
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <Clock className="w-4 h-4 text-white/80" />
+                  <span className="text-white/85">
+                    Répond en ~{artisan.responseTimeMinutes} min
+                  </span>
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4 text-accent" />
+                  <span className="text-white/85">
+                    {artisan.yearsExperience} ans d'expérience
+                  </span>
+                </span>
+              </div>
+
+              <div className="mt-5 flex flex-wrap gap-2">
                 <CallbackButton
                   context={{
                     trade: trade.slug,
@@ -128,18 +162,29 @@ export default async function ArtisanProfilePage({
                     artisanName: artisan.name,
                   }}
                   variant="cta"
-                  size="lg"
+                  size="xl"
                 >
-                  <Phone className="w-4 h-4 mr-2" />
+                  <Phone className="w-5 h-5 mr-2" />
                   Être rappelé en 5 min
                 </CallbackButton>
-                <Link href="/devis" className="btn-outline h-12">
+                <Link
+                  href="/devis"
+                  className="btn h-14 px-5 text-base bg-white/10 text-white hover:bg-white/15 backdrop-blur"
+                >
                   Devis détaillé
                 </Link>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-transparent via-transparent to-black/30 pointer-events-none" />
+      </section>
+
+      <div className="container">
+        <div className="my-6">
+          <TrustBadges variant="compact" />
+        </div>
 
         <div className="grid md:grid-cols-3 gap-6 my-6">
           <div className="md:col-span-2 space-y-6">

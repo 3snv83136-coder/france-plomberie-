@@ -9,6 +9,7 @@ import {
   Phone,
   RefreshCw,
   User,
+  Zap,
 } from "lucide-react";
 import { GUIDES, getGuideBySlug } from "@/data/guides";
 import { getTradeBySlug } from "@/data/trades";
@@ -16,6 +17,7 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { StructuredData } from "@/components/StructuredData";
 import { GuideContent } from "@/components/GuideContent";
 import { FAQ } from "@/components/FAQ";
+import { CallbackButton } from "@/components/CallbackButton";
 import { buildMetadata } from "@/lib/seo";
 import { breadcrumbSchema, faqSchema } from "@/lib/schema";
 import { SITE_NAME, SITE_URL } from "@/lib/utils";
@@ -105,52 +107,60 @@ export default async function GuidePage({
         ]}
       />
 
-      <article className="container">
-        <Breadcrumbs items={crumbs} />
+      <section className="relative isolate overflow-hidden bg-gradient-to-br from-primary via-[hsl(var(--primary-dark))] to-[hsl(217_91%_22%)] text-primary-foreground">
+        <div className="container relative py-8 md:py-12">
+          <Breadcrumbs items={crumbs} />
 
-        <header className="py-6 max-w-3xl">
-          <span className="inline-block text-xs px-3 py-1 rounded-full bg-primary/10 text-primary font-medium mb-3">
-            {guide.category}
-          </span>
-          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4">
-            {guide.title}
-          </h1>
-          <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-            {guide.heroIntro}
-          </p>
+          <div className="mt-2 max-w-3xl">
+            <span className="inline-block text-xs px-3 py-1 rounded-full bg-secondary text-secondary-foreground font-bold mb-3 shadow-sm">
+              {guide.category.toUpperCase()}
+            </span>
+            <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-balance leading-[1.1]">
+              {guide.title}
+            </h1>
+            <p className="text-base md:text-lg text-white/90 leading-relaxed">
+              {guide.heroIntro}
+            </p>
 
-          <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
-            <span className="inline-flex items-center gap-1.5">
-              <User className="w-4 h-4" />
-              <span>
-                Par <strong className="text-foreground">{guide.author.name}</strong>,{" "}
-                {guide.author.role}
+            <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-white/75">
+              <span className="inline-flex items-center gap-1.5">
+                <User className="w-4 h-4" />
+                <span>
+                  Par{" "}
+                  <strong className="text-white">{guide.author.name}</strong>
+                  , {guide.author.role}
+                </span>
               </span>
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Clock className="w-4 h-4" />
-              {guide.readingMinutes} min de lecture
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <CalendarDays className="w-4 h-4" />
-              Publié le{" "}
-              {new Date(guide.publishedAt).toLocaleDateString("fr-FR", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })}
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <RefreshCw className="w-4 h-4" />
-              Mis à jour le{" "}
-              {new Date(guide.updatedAt).toLocaleDateString("fr-FR", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })}
-            </span>
+              <span className="inline-flex items-center gap-1.5">
+                <Clock className="w-4 h-4" />
+                {guide.readingMinutes} min de lecture
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <CalendarDays className="w-4 h-4" />
+                Publié le{" "}
+                {new Date(guide.publishedAt).toLocaleDateString("fr-FR", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <RefreshCw className="w-4 h-4" />
+                Maj{" "}
+                {new Date(guide.updatedAt).toLocaleDateString("fr-FR", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </span>
+            </div>
           </div>
-        </header>
+        </div>
+
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-transparent via-transparent to-black/30 pointer-events-none" />
+      </section>
+
+      <article className="container">
 
         <div className="grid lg:grid-cols-[1fr_280px] gap-8 my-6">
           <div className="min-w-0">
@@ -173,25 +183,33 @@ export default async function GuidePage({
 
             <FAQ items={guide.faq} title="Questions fréquentes" />
 
-            <section className="my-10 card p-6 bg-gradient-to-br from-primary/10 to-accent/10 border-primary/20">
-              <h2 className="text-2xl font-bold mb-2">
-                Besoin d'un artisan pour votre projet ?
+            <section className="my-10 rounded-2xl overflow-hidden bg-gradient-to-br from-primary to-[hsl(var(--primary-dark))] text-primary-foreground p-6 md:p-8 shadow-lg">
+              <div className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-bold bg-secondary text-secondary-foreground mb-3 shadow-sm">
+                <Zap className="w-3 h-3" /> DÈS 69 € · 24/7
+              </div>
+              <h2 className="text-2xl md:text-3xl font-extrabold mb-2 text-balance">
+                Besoin d'un{" "}
+                {relatedTrades[0]?.name.toLowerCase() ?? "artisan"} maintenant ?
               </h2>
-              <p className="text-muted-foreground mb-4 max-w-2xl">
-                Recevez gratuitement jusqu'à 5 devis d'artisans vérifiés et
-                certifiés près de chez vous, sous 24h.
+              <p className="text-white/85 mb-4 max-w-2xl">
+                Laissez votre numéro, un technicien vous rappelle sous 5 min pour
+                un devis gratuit et sans engagement.
               </p>
               <div className="flex flex-wrap gap-2">
-                <Link href="/devis" className="btn-primary">
+                <CallbackButton
+                  context={{ trade: relatedTrades[0]?.slug }}
+                  variant="cta"
+                  size="lg"
+                >
                   <Phone className="w-4 h-4 mr-2" />
-                  Demander un devis gratuit
-                </Link>
+                  Être rappelé en 5 min
+                </CallbackButton>
                 {relatedTrades.length > 0 && (
                   <Link
                     href={`/${relatedTrades[0]!.slug}`}
-                    className="btn-outline"
+                    className="btn h-12 px-5 bg-white/10 text-white hover:bg-white/15 backdrop-blur"
                   >
-                    Trouver un {relatedTrades[0]!.name.toLowerCase()}
+                    Voir les {relatedTrades[0]!.plural.toLowerCase()}
                   </Link>
                 )}
               </div>

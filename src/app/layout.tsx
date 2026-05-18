@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { StructuredData } from "@/components/StructuredData";
 import { CallbackProvider } from "@/components/CallbackProvider";
 import { StickyMobileCTA } from "@/components/StickyMobileCTA";
+import { FloatingCTA } from "@/components/FloatingCTA";
 import { organizationSchema, websiteSchema } from "@/lib/schema";
 import { SITE_NAME, SITE_URL } from "@/lib/utils";
 
@@ -57,6 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main className="flex-1 pb-20 md:pb-0">{children}</main>
           <Footer />
           <StickyMobileCTA />
+          <FloatingCTA />
         </CallbackProvider>
       </body>
     </html>
