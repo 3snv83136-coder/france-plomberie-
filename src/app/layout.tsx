@@ -39,6 +39,9 @@ export const metadata: Metadata = {
     "France",
   ],
   formatDetection: { email: false, address: false, telephone: false },
+  verification: {
+    google: "io2dWUMaHX-z6xJUZytL7LOR3vM5m49zha-JTO5VBlg",
+  },
 };
 
 export const viewport: Viewport = {
