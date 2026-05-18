@@ -37,7 +37,7 @@ export default function ContactPage() {
                 "@type": "ContactPoint",
                 contactType: "customer service",
                 telephone: "+33-1-00-00-00-00",
-                email: "contact@artisans-pres-de-chez-vous.fr",
+                email: "contact@artisanspresdechezvous.com",
                 areaServed: "FR",
                 availableLanguage: "French",
                 hoursAvailable: {
@@ -76,10 +76,10 @@ export default function ContactPage() {
                 Pour toute question générale.
               </p>
               <a
-                href="mailto:contact@artisans-pres-de-chez-vous.fr"
+                href="mailto:contact@artisanspresdechezvous.com"
                 className="text-primary text-sm font-medium hover:underline break-all"
               >
-                contact@artisans-pres-de-chez-vous.fr
+                contact@artisanspresdechezvous.com
               </a>
             </div>
 

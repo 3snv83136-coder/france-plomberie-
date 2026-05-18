@@ -48,10 +48,10 @@ export default function ConfidentialitePage() {
                 <li>
                   Email DPO&nbsp;:{" "}
                   <a
-                    href="mailto:dpo@artisans-pres-de-chez-vous.fr"
+                    href="mailto:dpo@artisanspresdechezvous.com"
                     className="text-primary hover:underline"
                   >
-                    dpo@artisans-pres-de-chez-vous.fr
+                    dpo@artisanspresdechezvous.com
                   </a>
                 </li>
               </ul>
@@ -162,10 +162,10 @@ export default function ConfidentialitePage() {
               <p className="mt-3">
                 Pour exercer ces droits, contactez notre DPO&nbsp;:{" "}
                 <a
-                  href="mailto:dpo@artisans-pres-de-chez-vous.fr"
+                  href="mailto:dpo@artisanspresdechezvous.com"
                   className="text-primary hover:underline"
                 >
-                  dpo@artisans-pres-de-chez-vous.fr
+                  dpo@artisanspresdechezvous.com
                 </a>
               </p>
               <p>

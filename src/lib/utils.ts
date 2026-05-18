@@ -27,7 +27,7 @@ export function formatRating(rating: number): string {
 }
 
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://artisans-pres-de-chez-vous.fr";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://artisanspresdechezvous.com";
 
 export const SITE_NAME =
   process.env.NEXT_PUBLIC_SITE_NAME ?? "Artisans Près De Chez Vous";

@@ -72,10 +72,10 @@ export default function MentionsLegalesPage() {
                 <li>
                   <strong>Email&nbsp;:</strong>{" "}
                   <a
-                    href="mailto:contact@artisans-pres-de-chez-vous.fr"
+                    href="mailto:contact@artisanspresdechezvous.com"
                     className="text-primary hover:underline"
                   >
-                    contact@artisans-pres-de-chez-vous.fr
+                    contact@artisanspresdechezvous.com
                   </a>
                 </li>
                 <li>

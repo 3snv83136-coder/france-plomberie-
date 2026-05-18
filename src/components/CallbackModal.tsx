@@ -81,7 +81,7 @@ export function CallbackModal({ isOpen, onClose, context }: Props) {
       name: String(fd.get("name") || "Demande rappel"),
       email:
         String(fd.get("email") || "").trim() ||
-        `rappel+${Date.now()}@artisans-pres-de-chez-vous.fr`,
+        `rappel+${Date.now()}@artisanspresdechezvous.com`,
       phone: String(fd.get("phone") || ""),
       rgpd_consent: fd.get("rgpd") === "on",
       source: "callback-modal",

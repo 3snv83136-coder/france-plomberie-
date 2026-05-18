@@ -165,10 +165,10 @@ export default function CguPage() {
                 collecte, de modération et de publication des avis sont
                 consultables sur demande à l'adresse{" "}
                 <a
-                  href="mailto:contact@artisans-pres-de-chez-vous.fr"
+                  href="mailto:contact@artisanspresdechezvous.com"
                   className="text-primary hover:underline"
                 >
-                  contact@artisans-pres-de-chez-vous.fr
+                  contact@artisanspresdechezvous.com
                 </a>
                 .
               </p>
