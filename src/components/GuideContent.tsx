@@ -1,7 +1,7 @@
 import { AlertTriangle, CheckCircle2, Info, Lightbulb } from "lucide-react";
 import type { GuideBlock, GuideSection } from "@/data/guides/types";
 
-function Block({ block }: { block: GuideBlock }) {
+export function Block({ block }: { block: GuideBlock }) {
   switch (block.type) {
     case "p":
       return <p className="leading-relaxed">{block.text}</p>;

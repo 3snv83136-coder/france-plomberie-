@@ -53,6 +53,9 @@ export function Header() {
             <Link href="/guides" className="hover:text-primary transition-colors">
               Guides
             </Link>
+            <Link href="/actualites" className="hover:text-primary transition-colors">
+              Actus
+            </Link>
           </nav>
 
           <div className="flex items-center gap-2">

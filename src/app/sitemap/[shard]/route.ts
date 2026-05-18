@@ -4,6 +4,7 @@ import { REGIONS } from "@/data/regions";
 import { DEPARTMENTS } from "@/data/departments";
 import { GUIDES } from "@/data/guides";
 import { getArtisansForCityAndTrade } from "@/data/artisans";
+import { listAllNewsSlugs } from "@/lib/db/news";
 import { SITE_URL } from "@/lib/utils";
 
 export const revalidate = 86400;
@@ -93,6 +94,7 @@ function buildCoreShard(): Entry[] {
     "/devis",
     "/metiers",
     "/guides",
+    "/actualites",
     "/recherche",
     "/artisan/inscription",
     "/a-propos",
@@ -144,6 +146,16 @@ function buildTradeShard(tradeSlug: string): Entry[] | null {
   return entries;
 }
 
+async function buildNewsShard(): Promise<Entry[]> {
+  const slugs = await listAllNewsSlugs();
+  return slugs.map((n) => ({
+    loc: `${SITE_URL}/actualites/${n.slug}`,
+    lastmod: new Date(n.published_at).toISOString(),
+    changefreq: "monthly",
+    priority: 0.6,
+  }));
+}
+
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ shard: string }> },
@@ -154,6 +166,8 @@ export async function GET(
   let entries: Entry[] | null;
   if (id === "core") {
     entries = buildCoreShard();
+  } else if (id === "actualites") {
+    entries = await buildNewsShard();
   } else {
     entries = buildTradeShard(id);
   }
@@ -173,6 +187,7 @@ export async function GET(
 export function generateStaticParams() {
   return [
     { shard: "core.xml" },
+    { shard: "actualites.xml" },
     ...TRADES.map((t) => ({ shard: `${t.slug}.xml` })),
   ];
 }

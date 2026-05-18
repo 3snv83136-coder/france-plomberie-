@@ -59,6 +59,11 @@ export function Footer() {
               </Link>
             </li>
             <li>
+              <Link href="/actualites" className="text-muted-foreground hover:text-foreground">
+                Actualités
+              </Link>
+            </li>
+            <li>
               <Link href="/devis" className="text-muted-foreground hover:text-foreground">
                 Demander un devis
               </Link>
