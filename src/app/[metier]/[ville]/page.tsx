@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { CheckCircle2, MapPin, Phone, ShieldCheck, Star, Users } from "lucide-react";
 import { TRADES, getTradeBySlug } from "@/data/trades";
 import { CITIES, getCityBySlug } from "@/data/cities";
+import { getDepartmentByCode } from "@/data/departments";
+import { getRegionForDepartment } from "@/lib/geo";
 import { getArtisansForCityAndTrade } from "@/data/artisans";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { StructuredData } from "@/components/StructuredData";
@@ -94,8 +96,14 @@ export default async function CityTradePage({
 
   const localFAQ = [...trade.faq, ...buildLocalFAQ(trade.name, city.name, city.department.name)];
 
+  const dept = getDepartmentByCode(city.department.code);
+  const region = getRegionForDepartment(city.department.code);
   const crumbs = [
     { name: trade.plural, url: `/${trade.slug}` },
+    ...(region ? [{ name: region.name, url: `/${trade.slug}/region/${region.slug}` }] : []),
+    ...(dept
+      ? [{ name: `${dept.name} (${dept.code})`, url: `/${trade.slug}/departement/${dept.slug}` }]
+      : []),
     { name: city.name, url: path },
   ];
 

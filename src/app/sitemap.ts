@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next";
 import { TRADES } from "@/data/trades";
 import { CITIES } from "@/data/cities";
+import { REGIONS } from "@/data/regions";
+import { DEPARTMENTS } from "@/data/departments";
 import { getArtisansForCityAndTrade } from "@/data/artisans";
 import { SITE_URL } from "@/lib/utils";
 
@@ -25,6 +27,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }
 
   for (const t of TRADES) {
+    for (const r of REGIONS) {
+      entries.push({
+        url: `${SITE_URL}/${t.slug}/region/${r.slug}`,
+        lastModified: now,
+        changeFrequency: "weekly",
+        priority: 0.75,
+      });
+    }
+    for (const d of DEPARTMENTS) {
+      entries.push({
+        url: `${SITE_URL}/${t.slug}/departement/${d.slug}`,
+        lastModified: now,
+        changeFrequency: "weekly",
+        priority: 0.7,
+      });
+    }
     for (const c of CITIES) {
       entries.push({
         url: `${SITE_URL}/${t.slug}/${c.slug}`,

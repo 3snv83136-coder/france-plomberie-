@@ -68,6 +68,35 @@ export default async function TradePillarPage({
           <SearchBar />
         </div>
 
+        <section className="my-10 grid sm:grid-cols-2 gap-4">
+          <Link
+            href={`/${trade.slug}/region`}
+            className="card p-5 hover:border-primary hover:shadow-md transition-all"
+          >
+            <div className="font-bold text-lg mb-1">Par région</div>
+            <p className="text-sm text-muted-foreground">
+              Parcourez les {trade.plural.toLowerCase()} dans les 13 régions de
+              France métropolitaine et en Corse.
+            </p>
+            <span className="text-primary text-sm font-medium mt-2 inline-block">
+              Voir les régions →
+            </span>
+          </Link>
+          <Link
+            href={`/${trade.slug}/departement`}
+            className="card p-5 hover:border-primary hover:shadow-md transition-all"
+          >
+            <div className="font-bold text-lg mb-1">Par département</div>
+            <p className="text-sm text-muted-foreground">
+              Trouvez un {trade.name.toLowerCase()} dans les 96 départements
+              français, du 01 au 95 plus la Corse.
+            </p>
+            <span className="text-primary text-sm font-medium mt-2 inline-block">
+              Voir les départements →
+            </span>
+          </Link>
+        </section>
+
         <section className="my-10">
           <h2 className="text-2xl font-bold mb-4">
             Trouvez un {trade.name.toLowerCase()} dans votre ville
