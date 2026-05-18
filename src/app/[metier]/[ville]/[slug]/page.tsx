@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import {
   CheckCircle2,
@@ -8,7 +7,6 @@ import {
   MapPin,
   Phone,
   ShieldCheck,
-  Star,
 } from "lucide-react";
 import { getTradeBySlug } from "@/data/trades";
 import { getCityBySlug } from "@/data/cities";
@@ -16,6 +14,7 @@ import { getArtisanBySlug, getArtisansForCityAndTrade } from "@/data/artisans";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { StructuredData } from "@/components/StructuredData";
 import { RatingStars } from "@/components/RatingStars";
+import { AvatarInitials } from "@/components/AvatarInitials";
 import { buildMetadata } from "@/lib/seo";
 import { breadcrumbSchema, localBusinessSchema } from "@/lib/schema";
 
@@ -54,7 +53,6 @@ export default async function ArtisanProfilePage({
   if (!artisan) notFound();
 
   const path = `/${trade.slug}/${city.slug}/${artisan.slug}`;
-  const photo = `https://ui-avatars.com/api/?name=${artisan.photoSeed}&background=2563eb&color=fff&size=512&bold=true`;
   const similar = getArtisansForCityAndTrade(city.slug, trade.slug)
     .filter((a) => a.id !== artisan.id)
     .slice(0, 4);
@@ -76,14 +74,11 @@ export default async function ArtisanProfilePage({
 
         <section className="card p-6 my-4">
           <div className="flex flex-col sm:flex-row gap-5">
-            <Image
-              src={photo}
-              alt={`Logo ${artisan.name}`}
-              width={128}
-              height={128}
-              className="rounded-xl object-cover shrink-0 mx-auto sm:mx-0"
-              unoptimized
-              priority
+            <AvatarInitials
+              name={artisan.name}
+              size={128}
+              rounded="xl"
+              className="mx-auto sm:mx-0"
             />
 
             <div className="flex-1">

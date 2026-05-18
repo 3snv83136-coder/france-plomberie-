@@ -73,7 +73,7 @@ export function localBusinessSchema(
     "@id": `${SITE_URL}${path}#business`,
     name: artisan.name,
     description: artisan.description,
-    image: `https://ui-avatars.com/api/?name=${artisan.photoSeed}&background=2563eb&color=fff&size=512`,
+    image: `${SITE_URL}/opengraph-image`,
     url: `${SITE_URL}${path}`,
     telephone: artisan.phone,
     email: artisan.email,

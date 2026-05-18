@@ -1,9 +1,9 @@
 import Link from "next/link";
-import Image from "next/image";
 import { CheckCircle2, Clock, Phone, MapPin, ShieldCheck } from "lucide-react";
 import type { Artisan } from "@/data/artisans";
 import type { Trade } from "@/data/trades";
 import { RatingStars } from "./RatingStars";
+import { AvatarInitials } from "./AvatarInitials";
 
 type Props = {
   artisan: Artisan;
@@ -14,20 +14,12 @@ type Props = {
 
 export function ArtisanCard({ artisan, trade, citySlug, rank }: Props) {
   const profileUrl = `/${trade.slug}/${citySlug}/${artisan.slug}`;
-  const photo = `https://ui-avatars.com/api/?name=${artisan.photoSeed}&background=2563eb&color=fff&size=200&bold=true`;
 
   return (
     <article className="card p-4 sm:p-5 hover:shadow-md transition-shadow">
       <div className="flex gap-4">
         <div className="relative shrink-0">
-          <Image
-            src={photo}
-            alt={`Logo de ${artisan.name}`}
-            width={72}
-            height={72}
-            className="rounded-lg object-cover"
-            unoptimized
-          />
+          <AvatarInitials name={artisan.name} size={72} rounded="lg" />
           {rank !== undefined && rank < 3 && (
             <span className="absolute -top-2 -left-2 inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-500 text-white text-xs font-bold">
               {rank + 1}

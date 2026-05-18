@@ -36,10 +36,6 @@ export const metadata: Metadata = {
     "France",
   ],
   formatDetection: { email: false, address: false, telephone: false },
-  icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
-  },
 };
 
 export const viewport: Viewport = {
