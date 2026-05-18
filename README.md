@@ -67,7 +67,12 @@ supabase db push
 #    b) Ou copier-coller le contenu de supabase/migrations/*.sql
 #       dans le SQL Editor de Supabase Studio, dans l'ordre.
 
-# 4. Lancer le site
+# 4. Peupler les tables référentielles (regions / departments / cities / trades)
+pnpm seed:db
+# Pour aussi importer des artisans fictifs (top 50 villes × 12 métiers) :
+pnpm seed:db:full
+
+# 5. Lancer le site
 pnpm dev
 ```
 
@@ -90,7 +95,7 @@ Tous les triggers `updated_at` et la création automatique de profil au signup s
 4. ~~10+ guides éditoriaux longs~~ ✓
 5. ~~Performance (avatars locaux, OG dynamique, manifest)~~ ✓
 6. ~~Supabase schema + API leads~~ ✓
-7. Script de seed `pnpm seed:db` (référentiel géo dans Supabase)
+7. ~~Script de seed `pnpm seed:db`~~ ✓
 8. Import Sirene de l'INSEE (~1M artisans)
 9. Auth artisan (Supabase Auth) + espace dashboard
 10. Recherche Meilisearch (autocomplete)
