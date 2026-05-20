@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 import { SITE_NAME } from "@/lib/utils";
 import { CallbackButton } from "./CallbackButton";
+import { MobileMenu } from "./MobileMenu";
 
 export function Header() {
   return (
@@ -61,12 +62,13 @@ export function Header() {
           <div className="flex items-center gap-2">
             <Link
               href="/recherche"
-              className="btn-outline h-10 px-3"
+              className="btn-outline h-10 px-3 hidden sm:inline-flex"
               aria-label="Rechercher"
             >
               <Search className="w-4 h-4" />
             </Link>
             <CallbackButton variant="cta" size="md" className="hidden sm:inline-flex" />
+            <MobileMenu />
           </div>
         </div>
       </header>
