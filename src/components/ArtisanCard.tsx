@@ -62,17 +62,32 @@ export function ArtisanCard({
             )}
           </div>
 
-          <RatingStars rating={artisan.rating} reviewCount={artisan.reviewCount} size="sm" />
+          {artisan.reviewCount > 0 && artisan.rating > 0 ? (
+            <RatingStars
+              rating={artisan.rating}
+              reviewCount={artisan.reviewCount}
+              size="sm"
+            />
+          ) : (
+            <span className="inline-flex items-center gap-1 text-xs text-accent font-medium">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              Entreprise vérifiée au RNE
+            </span>
+          )}
 
           <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-            <span className="inline-flex items-center gap-1">
-              <MapPin className="w-3.5 h-3.5" />
-              {artisan.address.split(",").slice(-1)[0].trim()}
-            </span>
-            <span className="inline-flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5" />
-              Répond en ~{artisan.responseTimeMinutes} min
-            </span>
+            {artisan.address && (
+              <span className="inline-flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5" />
+                {artisan.address.split(",").slice(-1)[0].trim()}
+              </span>
+            )}
+            {artisan.reviewCount > 0 && (
+              <span className="inline-flex items-center gap-1">
+                <Clock className="w-3.5 h-3.5" />
+                Répond en ~{artisan.responseTimeMinutes} min
+              </span>
+            )}
             {artisan.emergency && (
               <span className="inline-flex items-center gap-1 text-secondary font-bold">
                 <Zap className="w-3.5 h-3.5 fill-secondary" />

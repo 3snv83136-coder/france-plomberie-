@@ -75,8 +75,8 @@ export function localBusinessSchema(
     description: artisan.description,
     image: `${SITE_URL}/opengraph-image`,
     url: `${SITE_URL}${path}`,
-    telephone: artisan.phone,
-    email: artisan.email,
+    telephone: artisan.phone || undefined,
+    email: artisan.email || undefined,
     priceRange: "€".repeat(artisan.priceRange),
     address: {
       "@type": "PostalAddress",
@@ -98,24 +98,33 @@ export function localBusinessSchema(
       "@type": "City",
       name: city.name,
     },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: artisan.rating,
-      reviewCount: artisan.reviewCount,
-      bestRating: 5,
-      worstRating: 1,
-    },
-    review: artisan.reviews.map((r) => ({
-      "@type": "Review",
-      author: { "@type": "Person", name: r.author },
-      datePublished: r.date,
-      reviewBody: r.body,
-      reviewRating: {
-        "@type": "Rating",
-        ratingValue: r.rating,
-        bestRating: 5,
-      },
-    })),
+    // aggregateRating / review are omitted when there are no real reviews —
+    // Google rejects rich results with a 0 rating, and emitting fake ratings
+    // would be a structured-data violation.
+    aggregateRating:
+      artisan.reviewCount > 0 && artisan.rating > 0
+        ? {
+            "@type": "AggregateRating",
+            ratingValue: artisan.rating,
+            reviewCount: artisan.reviewCount,
+            bestRating: 5,
+            worstRating: 1,
+          }
+        : undefined,
+    review:
+      artisan.reviews.length > 0
+        ? artisan.reviews.map((r) => ({
+            "@type": "Review",
+            author: { "@type": "Person", name: r.author },
+            datePublished: r.date,
+            reviewBody: r.body,
+            reviewRating: {
+              "@type": "Rating",
+              ratingValue: r.rating,
+              bestRating: 5,
+            },
+          }))
+        : undefined,
     openingHoursSpecification: artisan.emergency
       ? [
           {

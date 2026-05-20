@@ -156,11 +156,19 @@ export default async function CityTradePage({
               </p>
 
               <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm mb-5">
-                <span className="inline-flex items-center gap-1.5">
-                  <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
-                  <strong>{avgRating.toFixed(1).replace(".", ",")}/5</strong>
-                  <span className="text-white/75">· {artisans.length} pros</span>
-                </span>
+                {avgRating > 0 ? (
+                  <span className="inline-flex items-center gap-1.5">
+                    <Star className="w-4 h-4 text-amber-400 fill-amber-400" />
+                    <strong>{avgRating.toFixed(1).replace(".", ",")}/5</strong>
+                    <span className="text-white/75">· {artisans.length} pros</span>
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5">
+                    <ShieldCheck className="w-4 h-4 text-accent" />
+                    <strong>{artisans.length}</strong>
+                    <span className="text-white/75">artisans vérifiés</span>
+                  </span>
+                )}
                 {emergencyCount > 0 && (
                   <span className="inline-flex items-center gap-1.5">
                     <Zap className="w-4 h-4 text-secondary fill-secondary" />

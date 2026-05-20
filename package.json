@@ -9,7 +9,8 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "seed:db": "tsx scripts/seed-supabase.ts",
-    "seed:db:full": "tsx scripts/seed-supabase.ts --with-artisans"
+    "seed:db:full": "tsx scripts/seed-supabase.ts --with-artisans",
+    "import:inpi": "tsx scripts/import-inpi.ts"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.2",

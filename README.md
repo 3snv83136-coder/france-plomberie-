@@ -72,9 +72,27 @@ pnpm seed:db
 # Pour aussi importer des artisans fictifs (top 50 villes × 12 métiers) :
 pnpm seed:db:full
 
-# 5. Lancer le site
+# 5. Importer les VRAIS artisans depuis le RNE de l'INPI (recommandé)
+pnpm import:inpi              # toutes les villes
+pnpm import:inpi --cities 20  # test sur les 20 plus grandes villes
+pnpm import:inpi --per 8      # plafonne à N entreprises par ville × NAF
+
+# 6. Lancer le site
 pnpm dev
 ```
+
+### Import INPI / RNE (vraies données artisans)
+
+`pnpm import:inpi` interroge l'API officielle gratuite
+`recherche-entreprises.api.gouv.fr` (qui source le Registre National des
+Entreprises de l'INPI + Sirene de l'INSEE) et remplit `public.artisans`
+avec de vraies entreprises : nom, SIRET, adresse, code NAF, date de
+création. `source='inpi'`, `verified=true`. Idempotent (conflit sur
+`siret`). Nécessite un accès réseau sortant + `SUPABASE_SERVICE_ROLE_KEY`.
+
+Les fiches importées n'ont ni note, ni avis, ni téléphone (le RNE ne les
+fournit pas) : l'UI s'adapte et affiche « Entreprise vérifiée au RNE » à
+la place. Les leads passent toujours par la modale de rappel.
 
 ### Schéma BDD
 
@@ -96,7 +114,7 @@ Tous les triggers `updated_at` et la création automatique de profil au signup s
 5. ~~Performance (avatars locaux, OG dynamique, manifest)~~ ✓
 6. ~~Supabase schema + API leads~~ ✓
 7. ~~Script de seed `pnpm seed:db`~~ ✓
-8. Import Sirene de l'INSEE (~1M artisans)
+8. ~~Import INPI / RNE des vraies entreprises (`pnpm import:inpi`)~~ ✓
 9. Auth artisan (Supabase Auth) + espace dashboard
 10. Recherche Meilisearch (autocomplete)
 11. Avis vérifiés (mail post-intervention)

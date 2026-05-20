@@ -126,30 +126,43 @@ export default async function ArtisanProfilePage({
               </p>
 
               <div className="mt-3 flex items-center gap-4 flex-wrap text-sm">
-                <span className="inline-flex items-center gap-1.5">
-                  <div className="flex">
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <Star
-                        key={i}
-                        className={`w-4 h-4 ${i <= Math.round(artisan.rating) ? "text-amber-400 fill-amber-400" : "text-white/30"}`}
-                      />
-                    ))}
-                  </div>
-                  <strong>{artisan.rating.toFixed(1).replace(".", ",")}/5</strong>
-                  <span className="text-white/75">· {artisan.reviewCount.toLocaleString("fr-FR")} avis</span>
-                </span>
-                <span className="inline-flex items-center gap-1.5">
-                  <Clock className="w-4 h-4 text-white/80" />
-                  <span className="text-white/85">
-                    Répond en ~{artisan.responseTimeMinutes} min
+                {artisan.reviewCount > 0 && artisan.rating > 0 ? (
+                  <span className="inline-flex items-center gap-1.5">
+                    <div className="flex">
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <Star
+                          key={i}
+                          className={`w-4 h-4 ${i <= Math.round(artisan.rating) ? "text-amber-400 fill-amber-400" : "text-white/30"}`}
+                        />
+                      ))}
+                    </div>
+                    <strong>{artisan.rating.toFixed(1).replace(".", ",")}/5</strong>
+                    <span className="text-white/75">
+                      · {artisan.reviewCount.toLocaleString("fr-FR")} avis
+                    </span>
                   </span>
-                </span>
-                <span className="inline-flex items-center gap-1.5">
-                  <CheckCircle2 className="w-4 h-4 text-accent" />
-                  <span className="text-white/85">
-                    {artisan.yearsExperience} ans d'expérience
+                ) : (
+                  <span className="inline-flex items-center gap-1.5">
+                    <ShieldCheck className="w-4 h-4 text-accent" />
+                    <span className="text-white/85">Entreprise vérifiée au RNE</span>
                   </span>
-                </span>
+                )}
+                {artisan.reviewCount > 0 && (
+                  <span className="inline-flex items-center gap-1.5">
+                    <Clock className="w-4 h-4 text-white/80" />
+                    <span className="text-white/85">
+                      Répond en ~{artisan.responseTimeMinutes} min
+                    </span>
+                  </span>
+                )}
+                {artisan.yearsExperience > 0 && (
+                  <span className="inline-flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4 text-accent" />
+                    <span className="text-white/85">
+                      {artisan.yearsExperience} ans d'expérience
+                    </span>
+                  </span>
+                )}
               </div>
 
               <div className="mt-5 flex flex-wrap gap-2">
@@ -194,14 +207,25 @@ export default async function ArtisanProfilePage({
                 {artisan.description}
               </p>
               <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
-                <div className="card p-3">
-                  <div className="text-xs text-muted-foreground">Expérience</div>
-                  <div className="font-bold text-lg">{artisan.yearsExperience} ans</div>
-                </div>
-                <div className="card p-3">
-                  <div className="text-xs text-muted-foreground">Avis clients</div>
-                  <div className="font-bold text-lg">{artisan.reviewCount.toLocaleString("fr-FR")}</div>
-                </div>
+                {artisan.yearsExperience > 0 && (
+                  <div className="card p-3">
+                    <div className="text-xs text-muted-foreground">Expérience</div>
+                    <div className="font-bold text-lg">{artisan.yearsExperience} ans</div>
+                  </div>
+                )}
+                {artisan.reviewCount > 0 ? (
+                  <div className="card p-3">
+                    <div className="text-xs text-muted-foreground">Avis clients</div>
+                    <div className="font-bold text-lg">
+                      {artisan.reviewCount.toLocaleString("fr-FR")}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="card p-3">
+                    <div className="text-xs text-muted-foreground">Statut</div>
+                    <div className="font-bold text-lg text-accent">Vérifiée RNE</div>
+                  </div>
+                )}
               </div>
             </section>
 
@@ -234,29 +258,40 @@ export default async function ArtisanProfilePage({
               </section>
             )}
 
-            <section className="card p-6">
-              <h2 className="text-xl font-bold mb-3">
-                Avis clients ({artisan.reviewCount.toLocaleString("fr-FR")})
-              </h2>
-              <div className="space-y-4">
-                {artisan.reviews.map((r, i) => (
-                  <div key={i} className="border-b pb-4 last:border-0">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-semibold">{r.author}</span>
-                      <RatingStars rating={r.rating} size="sm" showValue={false} />
+            {artisan.reviews.length > 0 ? (
+              <section className="card p-6">
+                <h2 className="text-xl font-bold mb-3">
+                  Avis clients ({artisan.reviewCount.toLocaleString("fr-FR")})
+                </h2>
+                <div className="space-y-4">
+                  {artisan.reviews.map((r, i) => (
+                    <div key={i} className="border-b pb-4 last:border-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="font-semibold">{r.author}</span>
+                        <RatingStars rating={r.rating} size="sm" showValue={false} />
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-1">{r.body}</p>
+                      <time className="text-xs text-muted-foreground" dateTime={r.date}>
+                        {new Date(r.date).toLocaleDateString("fr-FR", {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                        })}
+                      </time>
                     </div>
-                    <p className="text-sm text-muted-foreground mb-1">{r.body}</p>
-                    <time className="text-xs text-muted-foreground" dateTime={r.date}>
-                      {new Date(r.date).toLocaleDateString("fr-FR", {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                      })}
-                    </time>
-                  </div>
-                ))}
-              </div>
-            </section>
+                  ))}
+                </div>
+              </section>
+            ) : (
+              <section className="card p-6">
+                <h2 className="text-xl font-bold mb-2">Avis clients</h2>
+                <p className="text-sm text-muted-foreground">
+                  Aucun avis pour le moment. Cette entreprise est référencée et
+                  vérifiée au Registre National des Entreprises. Contactez-la
+                  pour un devis gratuit.
+                </p>
+              </section>
+            )}
           </div>
 
           <aside className="space-y-4">
