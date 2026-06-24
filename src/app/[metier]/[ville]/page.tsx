@@ -253,49 +253,8 @@ export default async function CityTradePage({
       </section>
 
       <div className="container">
-        <div className="my-6">
-          <SearchBar />
-        </div>
-
-        <section className="my-8">
-          <div className="flex items-end justify-between mb-4 gap-3">
-            <div>
-              <h2 className="text-2xl md:text-3xl font-extrabold leading-tight">
-                Top {Math.min(artisans.length, 10)} {trade.plural.toLowerCase()} à {city.name}
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                Classement basé sur les avis, l'ancienneté et les certifications.
-              </p>
-            </div>
-            <CallbackButton
-              context={{
-                trade: trade.slug,
-                citySlug: city.slug,
-                cityName: city.name,
-                postalCode: city.postalCode,
-              }}
-              variant="cta"
-              size="md"
-              className="hidden sm:inline-flex shrink-0"
-            />
-          </div>
-          <div className="grid gap-4">
-            {artisans.map((a, i) => (
-              <ArtisanCard
-                key={a.id}
-                artisan={a}
-                trade={trade}
-                cityName={city.name}
-                postalCode={city.postalCode}
-                citySlug={city.slug}
-                rank={i}
-              />
-            ))}
-          </div>
-        </section>
-
         {trade.slug === "plombier" && (
-          <section className="my-10">
+          <section className="mt-6">
             <div className="flex items-center gap-2 mb-3">
               <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary shrink-0">
                 <Zap className="w-4 h-4" />
@@ -354,6 +313,47 @@ export default async function CityTradePage({
             </div>
           </section>
         )}
+
+        <div className="my-6">
+          <SearchBar />
+        </div>
+
+        <section className="my-8">
+          <div className="flex items-end justify-between mb-4 gap-3">
+            <div>
+              <h2 className="text-2xl md:text-3xl font-extrabold leading-tight">
+                Top {Math.min(artisans.length, 10)} {trade.plural.toLowerCase()} à {city.name}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Classement basé sur les avis, l'ancienneté et les certifications.
+              </p>
+            </div>
+            <CallbackButton
+              context={{
+                trade: trade.slug,
+                citySlug: city.slug,
+                cityName: city.name,
+                postalCode: city.postalCode,
+              }}
+              variant="cta"
+              size="md"
+              className="hidden sm:inline-flex shrink-0"
+            />
+          </div>
+          <div className="grid gap-4">
+            {artisans.map((a, i) => (
+              <ArtisanCard
+                key={a.id}
+                artisan={a}
+                trade={trade}
+                cityName={city.name}
+                postalCode={city.postalCode}
+                citySlug={city.slug}
+                rank={i}
+              />
+            ))}
+          </div>
+        </section>
 
         <section className="my-10 card p-6 bg-muted/30">
           <h2 className="text-2xl font-bold mb-4">
