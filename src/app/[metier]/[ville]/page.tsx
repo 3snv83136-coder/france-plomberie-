@@ -253,6 +253,67 @@ export default async function CityTradePage({
       </section>
 
       <div className="container">
+        {trade.slug === "plombier" && (
+          <section className="mt-6">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 text-primary shrink-0">
+                <Zap className="w-4 h-4" />
+              </span>
+              <h2 className="text-2xl md:text-3xl font-extrabold leading-tight">
+                Plombier Débouchage à {city.name}
+              </h2>
+            </div>
+            <p className="text-sm text-muted-foreground mb-4">
+              Canalisation, WC, évier ou douche bouché à {city.name} ? Notre
+              spécialiste du débouchage intervient en urgence.
+            </p>
+            <div className="card overflow-hidden border-2 border-primary/30 bg-gradient-to-br from-primary to-[hsl(var(--primary-dark))] text-primary-foreground p-6 md:p-8 shadow-lg">
+              <div className="md:flex items-center justify-between gap-6">
+                <div className="flex-1">
+                  <div className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-bold bg-secondary text-secondary-foreground mb-2">
+                    <Zap className="w-3 h-3" /> URGENCE DÉBOUCHAGE 24/7
+                  </div>
+                  <h3 className="text-2xl md:text-3xl font-extrabold mb-1 text-balance">
+                    Allô Débouchage
+                  </h3>
+                  <p className="text-white/85 mb-4">
+                    Débouchage de canalisations à {city.name} et alentours.
+                    Intervention rapide, devis gratuit, sans surprise.
+                  </p>
+                  <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm mb-1">
+                    {[
+                      "Débouchage WC, évier, douche",
+                      "Curage et hydrocurage",
+                      "Caméra d'inspection",
+                      "Intervention 24h/24 et 7j/7",
+                    ].map((s) => (
+                      <li key={s} className="flex items-start gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-accent shrink-0 mt-0.5" />
+                        <span>{s}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="shrink-0 mt-5 md:mt-0 text-center">
+                  <div className="text-xs font-bold uppercase tracking-wider text-white/70 mb-1">
+                    Appelez maintenant
+                  </div>
+                  <a
+                    href="tel:+33783636835"
+                    className="btn h-16 px-6 text-xl md:text-2xl font-extrabold bg-secondary text-secondary-foreground hover:bg-[hsl(var(--secondary-dark))] shadow-xl whitespace-nowrap"
+                  >
+                    <Phone className="w-6 h-6 mr-2" />
+                    07 83 63 68 35
+                  </a>
+                  <p className="mt-2 text-xs text-white/70">
+                    Appel direct · 7j/7 · Devis gratuit
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
         <div className="my-6">
           <SearchBar />
         </div>
